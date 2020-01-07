@@ -16,13 +16,6 @@ plot_style = {
 
 
 @Pipeable
-def ToDatetime(df, *args, **kwargs):
-    for column in args:
-        df[column] = pd.to_datetime(df[column], **kwargs)
-    return df
-
-
-@Pipeable
 def Drop(df, *args, axis=1, **kwargs):
     """
     Implements `df.DataFrame.drop()`.
@@ -71,4 +64,14 @@ def Sum(gb, column=None, **kwargs):
     else:
         grouped_sum = gb.sum(**kwargs)
     return grouped_sum
+
+
+@Pipeable
+def ToDatetime(df, *args, **kwargs):
+    if not args:
+        df = pd.to_datetime(df)
+    else:
+        for column in args:
+            df[column] = pd.to_datetime(df[column], **kwargs)
+    return df
 

@@ -15,7 +15,12 @@ def mock_data_a():
 
 @pytest.fixture()
 def mock_data_b():
-    return  pd.DataFrame({'id': [0,1,2], 'c': [9,8,0]})
+    return  pd.DataFrame({'id': [0,1,2], 'c': [9,9,8]})
+
+
+@pytest.fixture()
+def mock_data_date():
+    return  pd.DataFrame({'id': [0,1,2], 'date': ['2019-01-01', '2019-01-02', '2019-01']})
 
 
 @pytest.fixture()

@@ -1,15 +1,34 @@
 import pytest
 import pandas as pd
 
-from .fixtures import mock_data_a, mock_data_b, mock_user_data
+from .fixtures import mock_data_a, mock_data_b, mock_data_date, mock_user_data
 from dpipe.base import Pipeable
-from dpipe.process import Drop, GroupBy, Mean, Merge, Sample, Select, Sum
+from dpipe.process import Drop, GroupBy, Mean, Merge, Sample, Select, Sum, ToDatetime
 
 import dpipe
 
 
-def test_Drop(mock_data_a: pd.DataFrame):
+def test_ToDatetime_series(mock_data_date: pd.DataFrame):
     # GIVEN
+    srs = mock_data_date['date']
+
+    # WHEN
+    new_srs = srs >> ToDatetime
+
+    # THEN
+    assert pd.api.types.is_datetime64_any_dtype(new_srs)
+
+
+def test_ToDatetime_dataframe(mock_data_date: pd.DataFrame):
+    # WHEN
+    df = mock_data_date >> ToDatetime('date')
+
+    # THEN
+    assert pd.api.types.is_datetime64_any_dtype(df['date'])
+
+
+def test_Drop(mock_data_a: pd.DataFrame):
+    # WHEN
     dropped = mock_data_a >> Drop('b')
 
     # THEN
@@ -42,7 +61,7 @@ def test_Mean_type_Series(mock_user_data: pd.DataFrame):
 
 
 def test_Merge(mock_data_a: pd.DataFrame, mock_data_b: pd.DataFrame):
-    # GIVEN
+    # WHEN
     merged = (mock_data_a, mock_data_b) >> Merge(on='id')
 
     # THEN
