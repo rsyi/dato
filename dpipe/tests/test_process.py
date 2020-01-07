@@ -1,30 +1,12 @@
 import pytest
 import pandas as pd
 
-from .fixtures import mock_data_a, mock_data_b, mock_data_date, mock_user_data
+from .fixtures import mock_data_a, mock_data_b, mock_data_date, mock_data_null, mock_user_data
 from dpipe.base import Pipeable
-from dpipe.process import Drop, GroupBy, Mean, Merge, Sample, Select, Sum, ToDatetime
+from dpipe.process import Drop, DropNA, FillNA, GroupBy, Mean, Merge, Sample, Select, Sum, ToDatetime
 
 import dpipe
 
-
-def test_ToDatetime_series(mock_data_date: pd.DataFrame):
-    # GIVEN
-    srs = mock_data_date['date']
-
-    # WHEN
-    new_srs = srs >> ToDatetime
-
-    # THEN
-    assert pd.api.types.is_datetime64_any_dtype(new_srs)
-
-
-def test_ToDatetime_dataframe(mock_data_date: pd.DataFrame):
-    # WHEN
-    df = mock_data_date >> ToDatetime('date')
-
-    # THEN
-    assert pd.api.types.is_datetime64_any_dtype(df['date'])
 
 
 def test_Drop(mock_data_a: pd.DataFrame):
@@ -34,6 +16,22 @@ def test_Drop(mock_data_a: pd.DataFrame):
     # THEN
     assert len(dropped.columns) == 1
     assert set(dropped.columns) == {'id'}
+
+
+def test_DropNA(mock_data_null: pd.DataFrame):
+    # WHEN
+    df = mock_data_null >> DropNA()
+
+    # THEN
+    assert len(df) == 1
+
+
+def test_FillNA(mock_data_null: pd.DataFrame):
+    # WHEN
+    df = mock_data_null >> FillNA(-1)
+
+    # THEN
+    assert df.isnull().values.any()==False
 
 
 def test_Groupby_type(mock_user_data: pd.DataFrame):
@@ -116,3 +114,23 @@ def test_Sum_value(mock_user_data: pd.DataFrame):
 
     # THEN
     assert series.California == 497057
+
+
+def test_ToDatetime_series(mock_data_date: pd.DataFrame):
+    # GIVEN
+    srs = mock_data_date['date']
+
+    # WHEN
+    new_srs = srs >> ToDatetime
+
+    # THEN
+    assert pd.api.types.is_datetime64_any_dtype(new_srs)
+
+
+def test_ToDatetime_dataframe(mock_data_date: pd.DataFrame):
+    # WHEN
+    df = mock_data_date >> ToDatetime('date')
+
+    # THEN
+    assert pd.api.types.is_datetime64_any_dtype(df['date'])
+
