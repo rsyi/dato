@@ -18,7 +18,7 @@ def InitModel(df, label, *args, **kwargs):
 @use_first_arg_only
 @Pipeable
 def TrainTestSplit(m, **kwargs):
-    X_train, X_test, y_train, y_test = m.train_test_split(m.X, m.y, **kwargs)
-    return (m, X_train, X_test, y_train, y_test)
+    train, test = m.train_test_split(**kwargs)
+    return (m, train, test)
 
 
