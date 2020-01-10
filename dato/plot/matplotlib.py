@@ -4,8 +4,8 @@ Matplotlib plotting functions.
 import matplotlib.pyplot as plt
 import numpy as np
 
-from .base import Pipeable, unpack_input
-from .style import mpl_style, mpl_style_decorator, show_grid
+from ..base import Pipeable, unpack_input
+from ..style import mpl_style_decorator
 
 line_kwargs = {
     'marker': 'o',
@@ -17,7 +17,6 @@ line_kwargs = {
 @Pipeable
 @mpl_style_decorator
 def Plot(*args, **kwargs):
-
     if not kwargs:
         kwargs = line_kwargs
 

@@ -1,26 +1,16 @@
 """
-Matplotlib plotting functions.
+pandas.DataFrame processing functions.
 """
-import matplotlib.pyplot as plt
-import numpy as np
 import pandas as pd
 
-from .base import Pipeable, unpack_input
-from .style import mpl_style, mpl_style_decorator
-from .utils import series_is_date
-
-plot_style = {
-    'marker': 'o',
-    'linestyle': '--',
-}
+from ..base import Pipeable, unpack_input, append_docstring
 
 
 @Pipeable
+@append_docstring(pd.DataFrame.drop)
 def Drop(df, *args, axis=1, **kwargs):
     """
-    Implements `pd.DataFrame.drop()`.
-
-    I have never once in my life dropped a row by index. Therefore I set the default to dropping columns.
+    Implements `pd.DataFrame.drop()`, changing the default behavior to drop columns, not rows.
 
     :param *args:
         Any args accepted by `pd.DataFrame.drop`.
@@ -32,6 +22,7 @@ def Drop(df, *args, axis=1, **kwargs):
 
 
 @Pipeable
+@append_docstring(pd.DataFrame.dropna)
 def DropNA(df, *args, **kwargs):
     """
     Implements `pd.DataFrame.dropna()`.
@@ -47,6 +38,7 @@ def DropNA(df, *args, **kwargs):
 
 
 @Pipeable
+@append_docstring(pd.DataFrame.fillna)
 def FillNA(df, value=None, columns=None, **kwargs):
     """
     Implements `pd.DataFrame.fillna()`. If a scalar value is passed it is used to fill all missing values. Alternatively, an array-like 'value' can be given. It's expected that the array-like have the same length as 'self'.
@@ -69,6 +61,7 @@ def FillNA(df, value=None, columns=None, **kwargs):
 
 
 @Pipeable
+@append_docstring(pd.DataFrame.groupby)
 def GroupBy(df, *args, **kwargs):
     """
     Implements `pd.DataFrame.groupby()`.
@@ -85,47 +78,78 @@ def GroupBy(df, *args, **kwargs):
 
 
 @Pipeable
-def Mean(gb, column=None, **kwargs):
-    if column is not None:
-        grouped_mean = gb.mean(**kwargs)[column]
-    else:
-        grouped_mean = gb.mean(**kwargs)
-    return grouped_mean
+@append_docstring(pd.DataFrame.head)
+def Head(df, *args, **kwargs):
+    """
+    Implements `pd.DataFrame.head()` (args and kwargs are passed through).
 
-
-@unpack_input
-@Pipeable
-def Merge(*args, unpack_input=True, **kwargs):
-    merged = pd.merge(*args, **kwargs)
-    return merged
+    """
+    return df.head(*args, **kwargs)
 
 
 @Pipeable
-def ReadCSV(*args, **kwargs):
-    return pd.read_csv(*args, **kwargs)
+@append_docstring(pd.DataFrame.rename)
+def Rename(df, *args, axis=1, **kwargs):
+    """
+    Implements pandas.DataFrame.rename, changing the default behavior to rename columns.
+    """
+    return df.rename(*args, axis=axis, **kwargs)
 
 
 @Pipeable
+@append_docstring(pd.DataFrame.sample)
 def Sample(df, **kwargs):
+    """
+    Implements `df.sample()`.
+
+    :param *args:
+        Any args accepted by `df.sample()`.
+    :param **kwargs:
+        Any kwargs accepted by `df.sample()`.
+
+    """
     return df.sample(**kwargs)
 
 
 @Pipeable
 def Select(df, *args):
+    """
+    Selects columns specified by args.
+
+    :param *args: Column name.
+    :type *args: tuple of strings.
+
+    """
     return df[list(args)]
 
 
 @Pipeable
-def Sum(gb, column=None, **kwargs):
-    if column is not None:
-        grouped_sum = gb.sum(**kwargs)[column]
-    else:
-        grouped_sum = gb.sum(**kwargs)
-    return grouped_sum
+@append_docstring(pd.DataFrame.sort_values)
+def SortValues(df, *args, **kwargs):
+    """
+    Implements `df.sort_values()`.
+
+    :param *args:
+        Any args accepted by `df.sort_values()`.
+    :param **kwargs:
+        Any kwargs accepted by `df.sort_values()`.
+
+    """
+    return df.sort_values(*args, **kwargs)
 
 
 @Pipeable
+@append_docstring(pd.to_datetime)
 def ToDatetime(df, *args, **kwargs):
+    """
+    Implements `pd.to_datetime()`.
+
+    :param *args:
+        Any args accepted by `pd.to_datetime()`.
+    :param **kwargs:
+        Any kwargs accepted by `pd.to_datetime()`.
+
+    """
     if not args:
         df = pd.to_datetime(df)
     else:
