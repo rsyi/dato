@@ -1,6 +1,8 @@
 """
-Matplotlib plotting functions.
+Static plotting functions (e.g. matplotlib, pandas).
+
 """
+
 import matplotlib.pyplot as plt
 import numpy as np
 
