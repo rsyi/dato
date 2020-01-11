@@ -72,7 +72,10 @@ def Select(df, *args):
     :type *args: tuple of strings.
 
     """
-    return df[list(args)]
+    if len(args) == 1:
+        return df[args[0]]
+    else:
+        return df[list(args)]
 
 
 T = _make_pipeable_pandas('T', parent_class=pd.DataFrame, is_property=True)
@@ -101,7 +104,7 @@ BetweenTime = _make_pipeable_pandas('between_time', parent_class=pd.DataFrame)
 Bfill = _make_pipeable_pandas('bfill', parent_class=pd.DataFrame)
 Blocks = _make_pipeable_pandas('blocks', parent_class=pd.DataFrame, is_property=True)
 Bool = _make_pipeable_pandas('bool', parent_class=pd.DataFrame)
-Boxplot = _make_pipeable_pandas('boxplot', parent_class=pd.DataFrame)
+# Boxplot = _make_pipeable_pandas('boxplot', parent_class=pd.DataFrame)
 Clip = _make_pipeable_pandas('clip', parent_class=pd.DataFrame)
 Clip_lower = _make_pipeable_pandas('clip_lower', parent_class=pd.DataFrame)
 Clip_upper = _make_pipeable_pandas('clip_upper', parent_class=pd.DataFrame)

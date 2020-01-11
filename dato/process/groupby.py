@@ -12,7 +12,7 @@ Any = _make_pipeable_pandas('any', parent_class=pd.core.groupby.generic.DataFram
 Apply = _make_pipeable_pandas('apply', parent_class=pd.core.groupby.generic.DataFrameGroupBy)
 Backfill = _make_pipeable_pandas('backfill', parent_class=pd.core.groupby.generic.DataFrameGroupBy)
 Bfill = _make_pipeable_pandas('bfill', parent_class=pd.core.groupby.generic.DataFrameGroupBy)
-Boxplot = _make_pipeable_pandas('boxplot', parent_class=pd.core.groupby.generic.DataFrameGroupBy)
+# Boxplot = _make_pipeable_pandas('boxplot', parent_class=pd.core.groupby.generic.DataFrameGroupBy)
 Corr = _make_pipeable_pandas('corr', parent_class=pd.core.groupby.generic.DataFrameGroupBy)
 Corrwith = _make_pipeable_pandas('corrwith', parent_class=pd.core.groupby.generic.DataFrameGroupBy)
 Count = _make_pipeable_pandas('count', parent_class=pd.core.groupby.generic.DataFrameGroupBy)
