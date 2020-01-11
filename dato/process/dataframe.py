@@ -32,7 +32,7 @@ def Drop(df, *args, axis=1, **kwargs):
 
 @Pipeable
 @append_docstring(pd.DataFrame.fillna)
-def Fillna(df, value=None, columns=None, **kwargs):
+def FillNA(df, value=None, columns=None, **kwargs):
     """
     Implements `pd.DataFrame.fillna()`. If a scalar value is passed it is used to fill all missing values. Alternatively, an array-like 'value' can be given. It's expected that the array-like have the same length as 'self'.
 
@@ -123,10 +123,10 @@ Diff = _make_pipeable_pandas('diff', parent_class=pd.DataFrame)
 Div = _make_pipeable_pandas('div', parent_class=pd.DataFrame)
 Divide = _make_pipeable_pandas('divide', parent_class=pd.DataFrame)
 Dot = _make_pipeable_pandas('dot', parent_class=pd.DataFrame)
-Drop = _make_pipeable_pandas('drop', parent_class=pd.DataFrame)
+# Drop = _make_pipeable_pandas('drop', parent_class=pd.DataFrame)
 DropDuplicates = _make_pipeable_pandas('drop_duplicates', parent_class=pd.DataFrame)
-Droplevel = _make_pipeable_pandas('droplevel', parent_class=pd.DataFrame)
-Dropna = _make_pipeable_pandas('dropna', parent_class=pd.DataFrame)
+DropLevel = _make_pipeable_pandas('droplevel', parent_class=pd.DataFrame)
+DropNA = _make_pipeable_pandas('dropna', parent_class=pd.DataFrame)
 Dtypes = _make_pipeable_pandas('dtypes', parent_class=pd.DataFrame, is_property=True)
 Duplicated = _make_pipeable_pandas('duplicated', parent_class=pd.DataFrame)
 Empty = _make_pipeable_pandas('empty', parent_class=pd.DataFrame, is_property=True)
