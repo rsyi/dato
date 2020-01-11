@@ -19,75 +19,96 @@ line_kwargs = {
 }
 
 
+class DatoFacetGrid(FacetGrid):
+    def _facet_plot(self, func, ax, plot_args, plot_kwargs):
+        # Draw the plot
+        plot_args >> func(**plot_kwargs)
+
+        # Sort out the supporting information
+        self._update_legend_data(ax)
+        self._clean_axis(ax)
 
 
 @Pipeable
 @mpl_style_decorator
-def Plot(data, kind='line', x=None, y=None, row=None, col=None, **kwargs):
+def Plot(data, kind='line', x=None, y=None, row=None, col=None, hue=None, **kwargs):
 
     function_map = {
-        'scatter': plt.scatter,
-        'line': plt.plot,
-        'hist': plt.hist,
-        'bar': plt.bar,
-        'barh': plt.barh,
-        'box': plt.boxplot,
-        'hexbin': plt.hexbin,
+        'scatter': Scatter,
+        'line': Line,
+        'hist': Hist,
+        'bar': Bar,
+        'barh': Barh,
+        'box': Boxplot,
     }
+    plot_function = function_map[kind]
 
-
-    # Preprocess the `data` input.
-    if type(data) == tuple:
-        x = data[0]
-        y = data[1]
+    # Deal with extra logic.
+    if (row is not None) or (col is not None) or (hue is not None):
+        g = DatoFacetGrid(data, row=row, col=col, hue=hue, **kwargs)
+        g = g.map(plot_function, x, y, **kwargs)
     else:
-        if x is not None:
-            x = data[x]
-        else:
-            x = data
-        if y is not None:
-            y = data[y]
-
-    # Set default kwargs.
-    if kind=='scatter':
-        if 'alpha' not in kwargs:
-            kwargs['alpha'] = 0.5
-
-    # Plot.
-    if (row is not None) or (col is not None):
-        g = FacetGrid(data=data, row=row, col=col, **kwargs)
-        g = g.map(function_map[kind], x, y, **kwargs)
-    else:
-        if kind=='hist':
-            g = function_map[kind](x, **kwargs)
-        elif kind=='line':
-            if y is not None:
-                g = function_map[kind](x, y, **kwargs)
-            else:
-                g = function_map[kind](x, **kwargs)
-        elif kind=='bar':
-            g = function_map[kind](x=x, height=y, **kwargs)
-        elif kind=='barh':
-            g = function_map[kind](x=x, width=y, **kwargs)
-        else:
-            g = function_map[kind](x, y, **kwargs)
-
-    # Deal with datetimes.
-    fig = plt.gcf()
-    fig.autofmt_xdate()
-
+        g = data >> plot_function(x=x, y=y, **kwargs)
     return g
 
 
-@unpack_input
+def allow_multiple_plot_methods(func):
+    def wrapper(data, *args, **kwargs):
+        # Check data type.
+        # If series, plot is automatic.
+        if type(data) == pd.Series:
+            return func(data, *args, **kwargs)
+        # If x or y are specified, then assume dataframe.
+        elif 'x' in kwargs:
+            x = data[kwargs.pop('x')]
+            if 'y' in kwargs:
+                y = data[kwargs.pop('y')]
+            else:
+                y = None
+
+            if y is not None:
+                return func(x, y, *args, **kwargs)
+            else:
+                return func(x, *args, **kwargs)
+        elif type(data) in (tuple, list):
+            return func(*data, *args, **kwargs)
+        else:
+            return func(data, *args, **kwargs)
+    return wrapper
+
+
 @Pipeable
 @mpl_style_decorator
-def Scatter(*args, **kwargs):
+@allow_multiple_plot_methods
+def Line(*args, **kwargs):
+    return plt.plot(*args, **kwargs)
 
+
+@Pipeable
+@mpl_style_decorator
+@allow_multiple_plot_methods
+def Scatter(*args, **kwargs):
     if 'alpha' not in kwargs:
         kwargs['alpha'] = 0.5
-
     return plt.scatter(*args, **kwargs)
+
+
+@Pipeable
+@mpl_style_decorator
+def Bar(*args, **kwargs):
+    return plt.bar(*args, **kwargs)
+
+
+@Pipeable
+@mpl_style_decorator
+def Barh(*args, **kwargs):
+    return plt.bar(*args, **kwargs)
+
+
+@Pipeable
+@mpl_style_decorator
+def Boxplot(df, *args, **kwargs):
+    return df.boxplot(*args, **kwargs)
 
 
 @Pipeable

@@ -80,6 +80,10 @@ def mpl_style_decorator(func):
 
             func_return_value = func(*args, **kwargs)
 
+            # Deal with datetimes.
+            fig = plt.gcf()
+            fig.autofmt_xdate()
+
             # Set bounds on plot to tight.
             # ax = plt.gca()
             # ax.autoscale(enable=True, axis='x', tight=True)
