@@ -2,7 +2,8 @@
 
 `dato` is an open source library that provides a **rapid, declarative ecosystem for reproducible data science** within python. This consists of three major sub-modules:
 
-* `dato.pipe`, which facilitates R magrittr-style piping using the right bitshift operator `>>`, while staying largely pythonic in implementation. And unlike other `pandas`-oriented systems \(e.g. [dfply](https://github.com/kieferk/dfply) or [pandas-ply](https://github.com/coursera/pandas-ply)\), `dato.pipe` is meant to be flexible, and therefore does not enforce any particular object input types.
+* `dato.base`, which facilitates R magrittr-style piping using the right bitshift operator `>>`, while staying largely pythonic in implementation. And unlike other `pandas`-oriented systems \(e.g. [dfply](https://github.com/kieferk/dfply) or [pandas-ply](https://github.com/coursera/pandas-ply)\), `dato.pipe` is meant to be flexible, and therefore does not enforce any particular object input types.
+* `dato.process`, which implements pipe-ready pandas-style functionality.
 * `dato.plot`, which sets presentation-ready default styling for plotting tools, such as `matplotlib`.
 * `dato.ml`, which greatly simplifies and standardizes syntax across popular ML libraries, and implements automatic.
 
