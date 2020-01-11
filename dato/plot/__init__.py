@@ -1,1 +1,1 @@
-from .matplotlib import *
+from .static import *
