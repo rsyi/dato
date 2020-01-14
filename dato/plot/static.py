@@ -31,8 +31,9 @@ class DatoFacetGrid(FacetGrid):
 
 @Pipeable
 @mpl_style_decorator
-def Plot(data, x=None, y=None, kind='line', row=None, col=None, hue=None, **kwargs):
+def Plot(data, x=None, y=None, *args, kind='line', row=None, col=None, hue=None, **kwargs):
 
+    # Parse flexible inputs.
     if type(data) == tuple:
         data = pd.DataFrame(data).T
         x = data.columns[0]
@@ -52,17 +53,17 @@ def Plot(data, x=None, y=None, kind='line', row=None, col=None, hue=None, **kwar
     if (row is not None) or (col is not None) or (hue is not None):
         g = DatoFacetGrid(data, row=row, col=col, hue=hue, **kwargs)
         if y is not None:
-            g = g.map(plot_function, x, y, **kwargs)
+            g = g.map(plot_function, x, y, *args, **kwargs)
         else:
-            g = g.map(plot_function, x, **kwargs)
+            g = g.map(plot_function, x, *args, **kwargs)
     else:
         if x is not None:
             if y is not None:
-                g = plot_function(data[x], data[y], **kwargs)
+                g = plot_function(data[x], data[y], *args, **kwargs)
             else:
-                g = plot_function(data[x], **kwargs)
+                g = plot_function(data[x], *args, **kwargs)
         else:
-            g = plot_function(data, **kwargs)
+            g = plot_function(data, *args, **kwargs)
     return g
 
 
@@ -76,8 +77,13 @@ def _scatter(x, y=None, *args, **kwargs):
 def _hist(x, *args, **kwargs):
     return plt.hist(x, *args, **kwargs)
 
-def _line(x, y, *args, **kwargs):
-    return plt.plot(x, y, *args, **kwargs)
+
+def _line(x, y=None, *args, **kwargs):
+    if y is not None:
+        return plt.plot(x, y, *args, **kwargs)
+    else:
+        return x.plot(*args, kind='line', **kwargs)
+
 
 def _bar(x, height=None, *args, **kwargs):
     if height is not None:
@@ -85,18 +91,38 @@ def _bar(x, height=None, *args, **kwargs):
     else:
         return x.plot(*args, kind='bar', **kwargs)
 
-def _barh(x, *args, **kwargs):
-    return plt.barh(x, *args, **kwargs)
+
+def _barh(y, width=None, *args, **kwargs):
+    if width is not None:
+        return plt.barh(x, width, *args, **kwargs)
+    else:
+        return y.plot(*args, kind='barh', **kwargs)
+
 
 def _boxplot(x, *args, **kwargs):
-    return plt.boxplot(x, *args, **kwargs)
+    return x.plot(*args, kind='box', **kwargs)
+
+
+@Pipeable
+def Scatter(data, x=None, y=None, *args, **kwargs):
+    return data >> Plot(x=x, y=y, kind='scatter', *args, **kwargs)
 
 
 @Pipeable
 def Hist(data, x=None, *args, **kwargs):
-    return data >> Plot(x=x, kind="hist", *args, **kwargs)
+    return data >> Plot(x=x, kind='hist', *args, **kwargs)
 
 
 @Pipeable
-def Bar(data, x=None, *args, **kwargs):
-    return data >> Plot(x=x, kind="bar", *args, **kwargs)
+def Bar(data, x=None, height=None, *args, **kwargs):
+    return data >> Plot(x=x, y=height, kind='bar', *args, **kwargs)
+
+
+@Pipeable
+def Barh(data, y=None, width=None, *args, **kwargs):
+    return data >> Plot(x=y, y=width, kind='barh', *args, **kwargs)
+
+
+@Pipeable
+def Box(data, x=None, *args, **kwargs):
+    return data >> Plot(x=x, kind='box', *args, **kwargs)
